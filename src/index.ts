@@ -1,20 +1,24 @@
-import express, { Request, Response } from 'express';
-import dotenv from 'dotenv';
-import { dot } from 'node:test/reporters';
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./config/db";
+import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
 
 dotenv.config();
-const app = express();
-const PORT = process.env.PORT || 3000;
+connectDB();
 
-// Middleware
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 
-// Routes
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, TypeScript + Express!');
-});
+app.get("/", (_, res) => res.send("Welcome to Secure Node + TS + Express API!"));
 
-// Start server
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
