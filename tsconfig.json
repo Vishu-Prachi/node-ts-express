@@ -3,9 +3,12 @@
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
+    "baseUrl": "./",
+    
 
     // Environment Settings
     "module": "CommonJS",
+    "moduleResolution": "node",
     "target": "ES2020",
     "types": ["node"],
 
@@ -13,6 +16,7 @@
     "sourceMap": true,
     "declaration": false,
     "declarationMap": false,
+    // "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "emitDeclarationOnly": false,
 
