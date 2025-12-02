@@ -1,4 +1,7 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 interface sendEmailOTPtypo {
     toEmail: string;
@@ -7,6 +10,7 @@ interface sendEmailOTPtypo {
 
 
 const sendEmailOTP = async (toEmail:string, otpCode:string) => {
+    console.log("process.env.MAILTRAP_SMTP_HOST", process.env.MAILTRAP_SMTP_HOST);
     const transporter = nodemailer.createTransport({
         host: process.env.MAILTRAP_SMTP_HOST,
         port: 587,

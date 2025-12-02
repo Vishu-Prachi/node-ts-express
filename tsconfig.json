@@ -1,33 +1,19 @@
 {
   "compilerOptions": {
-    // File Layout
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "target": "ES2020",
+    "module": "CommonJS",
+    "rootDir": "src",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": false,
+    
     "baseUrl": "./",
     
-
-    // Environment Settings
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "target": "ES2020",
-    "types": ["node"],
-
-    // Output Settings
-    "sourceMap": true,
-    "declaration": false,
-    "declarationMap": false,
-    // "allowImportingTsExtensions": true,
-    "esModuleInterop": true,
-    "emitDeclarationOnly": false,
-
-    // Type Checking
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Other Useful Options
-    "skipLibCheck": true,
-    "verbatimModuleSyntax": false
+    "paths": {
+      "src/*": ["src/*"] 
+    }
   },
   "include": ["src"]
 }

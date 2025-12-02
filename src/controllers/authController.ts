@@ -4,15 +4,15 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import User from "../models/User";
-import sendEmail from "src/utils/sendEmail";
+import sendEmail from "../utils/sendEmail";
 const genrateOtp = () => {
-  return Math.floor(100000 + Math.random() * 900000);
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  return otp.toString();
 };
-
+const sendOtp = genrateOtp();
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
-    console.log("helllooooo");
     const existing = await User.findOne({ email });
     if (existing)
       return res.status(400).json({ message: "Email already exists" });
@@ -25,11 +25,11 @@ export const register = async (req: Request, res: Response) => {
     });
 
     
-    let otp = genrateOtp().toString();
+    // let otp = generateOtp();
+    // console.log("Generated OTP:", otp);
+    let otp = genrateOtp();
     console.log("Generated OTP:", otp);
-    // const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     await Otp.findOneAndUpdate(
       { email },
       { email, otp, expiresAt },
@@ -52,16 +52,16 @@ export const verifyOtp = async (req: Request, res: Response) => {
   try {
     const { email, otp } = req.body;
 
-    const otpData = await Otp.findOne({ email });
-    if (!otpData)
-      return res.status(400).json({ message: "OTP not found" });
+    const otpData = await Otp.findOne({ email, otp });
+    if (!otpData || otpData.otp !== otp)
+      return res.status(400).json({ message: "OTP not found or wrong" });
 
     if (otpData.expiresAt < new Date())
       return res.status(400).json({ message: "OTP expired" });
-    let otpCode = genrateOtp().toString();
-    console.log("Generated OTP verify:", otpCode);
-    if (otpData.otp !== otpCode)
-      return res.status(400).json({ message: "Invalid OTP" });
+    // let otpCode = sendOtp;
+    // console.log("Generated OTP verify:", otpCode);
+    // let otpCode = genrateOtp();
+    // console.log("Generated OTP verify:", otpCode);
 
     await User.findOneAndUpdate({ email }, { isVerified: true });
     await Otp.deleteOne({ email });
@@ -76,7 +76,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 export const resendOtp = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-
+    console.log("Resend OTP for email:", email);
     const user = await User.findOne({ email });
     if (!user)
       return res.status(404).json({ message: "User not found" });
@@ -84,9 +84,9 @@ export const resendOtp = async (req: Request, res: Response) => {
     if (user.isVerified)
       return res.status(400).json({ message: "Already verified" });
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = genrateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
+    console.log("Generated OTP resend:", otp);
     await Otp.findOneAndUpdate(
       { email },
       { email, otp, expiresAt },
